@@ -15,5 +15,14 @@ const ENTRY_TEXT =
 const outputDir = process.env.AWE_OUTPUT_DIR ?? "/output";
 const outputPath = join(outputDir, "entry.txt");
 
+// The gate: entry.txt must hold 1–280 Unicode code points of real text.
+// Refuse to write anything that would fail it instead of writing it anyway.
+const length = [...ENTRY_TEXT].length;
+if (length < 1 || length > 280 || ENTRY_TEXT.trim().length === 0) {
+  throw new Error(
+    `entry text is ${length} code points; the gate needs 1–280 of non-blank text`,
+  );
+}
+
 mkdirSync(outputDir, { recursive: true });
 writeFileSync(outputPath, ENTRY_TEXT, "utf8");
